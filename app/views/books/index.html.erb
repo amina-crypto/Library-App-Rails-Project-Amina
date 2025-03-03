@@ -1,0 +1,56 @@
+<div class="d-flex justify-content-between align-items-center">
+  <h1 class="h2">Available Books Collection</h1>
+</div>
+
+<%= form_with url: books_path, method: :get, class: "my-4 w-100 d-flex flex-column align-items-center flex-md-row justify-content-center gap-3" do |form| %>
+  <%= form.text_field :search, placeholder: "Search by book title", class: "form-control", value: @query %>
+  <%= form.select :category, options_for_select(Book.categories.keys.map { |category| [category.humanize, category] }, @current_category), {prompt: "Select a category"}, class: "form-select" %>
+  <%= form.submit "Search Books", class: "btn btn-success" %>
+<% end %>
+
+<% if @books.present? %>
+  <div class="table-responsive mt-5">
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">
+            Title of the Book
+          </th>
+          <th scope="col">
+            Author's Name
+          </th>
+          <th scope="col">
+            Category
+          </th>
+          <th scope="col">
+            Options
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @books.each do |book| %>
+          <tr>
+            <th scope="row">
+              <%= link_to book.title, book, class: 'text-primary' %>
+            </th>
+            <td>
+              <%= book.author %>
+            </td>
+            <td>
+              <%= book.category.humanize %>
+            </td>
+            <td>
+              <% if book.available? %>
+                <%= link_to 'Reserve Now', reserve_book_path(book), class: 'btn btn-link' %>
+              <% else %>
+                Currently reserved
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="mt-5">No books found in the collection</div>
+<% end %>

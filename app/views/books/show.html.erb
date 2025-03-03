@@ -1,0 +1,50 @@
+<div class="mt-4 d-flex justify-content-between align-items-center">
+  <h1 class="h2">Book Details</h1>
+  <div class="mt-2">
+    <% if @book.available? %>
+      <%= link_to "Reserve", reserve_book_path(@book), class: "btn btn-primary" %>
+    <% else %>
+      <span class="text-danger">Not available</span>
+      <% if @book.reservation.present? %>
+        <div class="mt-2">Reserved by: <%= @book.reservation.user.name %></div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4">
+  <h2 class="h5">Book Title</h2>
+  <p class="text-muted"><%= @book.title %></p>
+</div>
+
+<div class="mt-4">
+  <h2 class="h5">Author Name</h2>
+  <p class="text-muted"><%= @book.author %></p>
+</div>
+
+<div class="mt-4">
+  <h2 class="h5">Language of the Book</h2>
+  <p class="text-muted"><%= @book.language %></p>
+</div>
+
+<div class="mt-4">
+  <h2 class="h5">Year of Publication</h2>
+  <p class="text-muted"><%= @book.publish_year %></p>
+</div>
+
+<div class="mt-4">
+  <h2 class="h5">Book Category</h2>
+  <p class="text-muted"><%= @book.category %></p>
+</div>
+
+<div class="mt-4">
+  <h2 class="h5">Book Description</h2>
+  <p class="text-muted"><%= @book.description || "Description not available" %></p>
+</div>
+
+<% if @book.reservation.present? %>
+  <div class="mt-4">
+    <h2 class="h5">Reserved By</h2>
+    <p class="text-muted"><%= @book.reservation.user.name %></p>
+  </div>
+<% end %>

@@ -1,0 +1,63 @@
+<div class="d-flex justify-content-between align-items-center">
+  <h1 class="h2">Current Reservations</h1>
+</div>
+
+<% if @reservations.present? %>
+  <div class="table-responsive mt-5">
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">
+            Item
+          </th>
+          <th scope="col">
+            Reservation Status
+          </th>
+          <th scope="col">
+            Expiration Time
+          </th>
+          <% if current_user.library_personnel? %>
+            <th scope="col">
+              Reserved By
+            </th>
+            <th scope="col">
+              Manage
+            </th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @reservations.each do |reservation| %>
+          <tr>
+            <th scope="row">
+              <%= link_to (reservation.book ? reservation.book.title : reservation.journal.title), reservation.book || reservation.journal, class: 'text-primary' %>
+            </th>
+            <td>
+              <%= reservation.status %>
+            </td>
+            <td>
+              <% if reservation.status != 'pending' %>
+                ---
+              <% elsif reservation.reservation_expired? %>
+                <span class="text-danger">Reservation Expired</span>
+              <% else %>
+                <%= distance_of_time_in_words(reservation.expires_at, Time.current) %>
+              <% end %>
+            </td>
+            <% if current_user.library_personnel? %>
+              <td>
+                <%= reservation.user.name %>
+              </td>
+              <td class="d-flex gap-2">
+                <%= button_to 'Approve', approve_reservation_path(reservation), method: :post, class: 'btn text-success p-0' %>
+                <%= button_to 'Reject', reject_reservation_path(reservation), method: :post, class: 'btn text-danger p-0' %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="mt-5">No current reservations available</div>
+<% end %>

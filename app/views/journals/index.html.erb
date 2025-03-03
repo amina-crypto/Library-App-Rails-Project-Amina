@@ -1,0 +1,62 @@
+<div class="d-flex justify-content-between align-items-center">
+  <h1 class="h2">Journal Collection</h1>
+</div>
+
+<%= form_with url: journals_path, method: :get, class: "my-4 w-100 d-flex flex-column align-items-center flex-md-row justify-content-center gap-3" do |form| %>
+  <%= form.text_field :search, placeholder: "Search by title", class: "form-control", value: @query %>
+  <%= form.select :category, options_for_select(Journal.categories.keys.map { |category| [category.humanize, category] }, @current_category), {prompt: "Choose a category"}, class: "form-select" %>
+  <%= form.submit "Search Journals", class: "btn btn-success" %>
+<% end %>
+
+<% if @journals.present? %>
+  <div class="table-responsive mt-5">
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">
+            Journal Title
+          </th>
+          <th scope="col">
+            Volume Number
+          </th>
+          <th scope="col">
+            Issue Number
+          </th>
+          <th scope="col">
+            Journal Category
+          </th>
+          <th scope="col">
+            Available Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @journals.each do |journal| %>
+          <tr>
+            <th scope="row">
+              <%= link_to journal.title, journal, class: 'text-primary' %>
+            </th>
+            <td>
+              <%= journal.volume %>
+            </td>
+            <td>
+              <%= journal.issue %>
+            </td>
+            <td>
+              <%= journal.category.humanize %>
+            </td>
+            <td>
+              <% if journal.available? %>
+                <%= link_to 'Reserve Now', reserve_journal_path(journal), class: 'text-primary' %>
+              <% else %>
+                Currently Reserved
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="mt-5">No journals found in the collection</div>
+<% end %>

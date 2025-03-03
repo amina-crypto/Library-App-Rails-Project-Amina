@@ -1,0 +1,74 @@
+<div class="d-flex justify-content-between align-items-center">
+  <h1 class="h2">User Profile</h1>
+</div>
+
+<div class="mt-4">
+  <h2 class="h5">User Details</h2>
+  <p><strong>Full Name:</strong> <%= @user.name %> <%= @user.surname %></p>
+  <p><strong>Email Address:</strong> <%= @user.email %></p>
+  <p><strong>Home Address:</strong> <%= @user.address %></p>
+</div>
+
+<div class="mt-4">
+  <h2 class="h5">Current Loans</h2>
+  <% if @user.loans.any? %>
+    <ul class="list-group">
+      <% @user.loans.each do |loan| %>
+        <li class="list-group-item">
+          <% if loan.book %>
+            <strong>Title:</strong> <%= loan.book.title %>
+          <% else %>
+            <strong>Title:</strong> <%= loan.journal.title %>
+          <% end %>
+          <br>
+          <strong>Due Date:</strong> <%= loan.due_date.strftime("%B %d, %Y") %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No current loans available.</p>
+  <% end %>
+</div>
+
+<div class="mt-4">
+  <h2 class="h5">Current Reservations</h2>
+  <% if @user.reservations.any? %>
+    <ul class="list-group">
+      <% @user.reservations.each do |reservation| %>
+        <li class="list-group-item">
+          <% if reservation.book %>
+            <strong>Title:</strong> <%= reservation.book.title %> by <%= reservation.book.author %>
+          <% else %>
+            <strong>Title:</strong> <%= reservation.journal.title %>
+          <% end %>
+          <br>
+          <strong>Reserved On:</strong> <%= reservation.created_at.to_date.strftime("%B %d, %Y") %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No current reservations available.</p>
+  <% end %>
+</div>
+
+<div class="mt-4">
+  <h2 class="h5">Outstanding Fines</h2>
+  <% overdue_loans = @user.loans.select { |loan| loan.fine > 0 } %>
+  <% if overdue_loans.any? %>
+    <ul class="list-group">
+      <% overdue_loans.each do |loan| %>
+        <li class="list-group-item">
+          <% if loan.book %>
+            <strong>Title:</strong> <%= loan.book.title %>
+          <% else %>
+            <strong>Title:</strong> <%= loan.journal.title %>
+          <% end %>
+          <br>
+          <strong>Fine Amount:</strong> $<%= loan.fine %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No outstanding fines.</p>
+  <% end %>
+</div>

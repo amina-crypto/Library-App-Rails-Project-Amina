@@ -1,0 +1,64 @@
+<div class="d-flex justify-content-between align-items-center">
+  <h1 class="h2">Current Loans</h1>
+</div>
+
+<% if @loans.present? %>
+  <div class="table-responsive mt-3">
+    <table class="table table-bordered table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">
+            Item
+          </th>
+          <th scope="col">
+            Due Date
+          </th>
+          <th scope="col">
+            Late Fee
+          </th>
+          <% if current_user.library_personnel? %>
+            <th scope="col">
+              Borrower
+            </th>
+            <th scope="col">
+              Manage
+            </th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @loans.each do |loan| %>
+          <tr>
+            <th scope="row">
+              <%= link_to (loan.book ? loan.book.title : loan.journal.title), loan.book || loan.journal, class: 'text-primary' %>
+            </th>
+            <td>
+              <% if loan.due_date.to_date < Time.current.to_date %>
+                <span class="text-danger">Past Due</span>
+              <% else %>
+                <%= distance_of_time_in_words(loan.due_date, Time.current) %>
+              <% end %>
+            </td>
+            <td>
+              <%= loan.fine %> <%= 'paid' if loan.returned %>
+            </td>
+            <% if current_user.library_personnel? %>
+              <td>
+                <%= loan.user.name %>
+              </td>
+              <td>
+                <% if loan.returned %>
+                  Returned
+                <% else %>
+                  <%= button_to 'Mark as Returned', return_loan_path(loan), method: :post, class: 'btn btn-warning' %>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="mt-3">No current loans available</div>
+<% end %>
